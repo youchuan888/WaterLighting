@@ -319,7 +319,7 @@ document.getElementById("SmartBLE").onclick=async()=>{
 // RX Handler
 function onRX(e){
     const v=new Uint8Array(e.target.value.buffer);
-    rxLine.textContent="RX: "+[...v].map(x=>x.toString(16).padStart(2,'0')).join(" ");
+    rxLine.textContent="RX: "+[...v].map(x=>x.toString(16).toUpperCase().padStart(2,'0')).join(" ");
     if(v.length === 6 && v[0] === 0xAA){
         const id = v[1];
         if(id >= 1 && id <= 32){
@@ -359,3 +359,4 @@ setBtn.onclick=async()=>{
 </script>
 </body>
 </html>
+
