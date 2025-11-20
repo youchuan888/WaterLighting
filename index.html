@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+<title>Underwater Lighting</title>
+
+<style>
+/* ======= 基礎設定（手機預設） ======= */
+body {
+    margin: 0;
+    padding: 0;
+    background: #E9EEF5;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto;
+    overflow-x: hidden;
+}
+
+.header {
+    text-align: center;
+    padding: 10px 0;
+    font-size: 18px;
+    font-weight: bold;
+    color: #1A2A44;
+}
+
+/* ===== 卡片 ===== */
+.card {
+    background: #fff;
+    margin: 10px 8px;            /* ← 增加垂直距離 */
+    padding: 12px;
+    border-radius: 14px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+
+/* ===== 卡片標題 ===== */
+.card-title {
+    font-size: 15px;
+    font-weight: 600;
+    color: #1A2A44;
+    margin-bottom: 10px;         /* ← 標題與內部按鈕距離 */
+    padding-left: 2px;
+}
+
+.row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.btn {
+    flex: 1;
+    margin: 0 4px;
+    padding: 8px 0;
+    text-align: center;
+    background: #F1F4F8;
+    border-radius: 10px;
+    color: #334;
+    font-size: 14px;
+    border: 1px solid #d0d6e0;
+    transition: 0.15s;
+}
+.btn:active { transform: scale(0.96); }
+.btn.active {
+    background: #2D73FF;
+    color: white;
+    border-color: #2D73FF;
+}
+
+.btn-small {
+    flex: none;
+    width: 60px;
+    padding: 7px 0;
+    font-size: 14px;
+}
+
+.num {
+    width: 50px;
+    padding: 6px 5px;
+    font-size: 15px;
+    border-radius: 8px;
+    border: 1px solid #c6cbd3;
+}
+
+.slider-row { display: flex; align-items: center; }
+#dimSlider { flex: 1; margin-right: 6px; }
+#dimVal { width: 45px; }
+
+#bleStatus {
+    font-size: 13px;
+    color: #555;
+    padding: 2px 10px;
+}
+
+/* TX/RX 單行 */
+.logline {
+    height: 22px;
+    line-height: 22px;
+    background: #fff;
+    margin: 0 auto 4px;
+    padding-left: 6px;
+    border-radius: 8px;
+    font-size: 12px;
+    border: 1px solid #d0d6e0;
+    overflow: hidden;
+    white-space: nowrap;
+    width: calc(100% - 16px);
+}
+
+/* SET 按鈕動畫 */
+@keyframes pulseGlow {
+    0%   { box-shadow: 0 0 0px rgba(40,199,111, 0.6); }
+    50%  { box-shadow: 0 0 15px rgba(40,199,111, 0.9); }
+    100% { box-shadow: 0 0 0px rgba(40,199,111, 0.6); }
+}
+.btn-set-anim { animation: pulseGlow 1.4s infinite ease-in-out; }
+
+@keyframes bounceTap {
+    0% { transform: scale(1); }
+    35% { transform: scale(0.88); }
+    100% { transform: scale(1); }
+}
+.btn-bounce { animation: bounceTap 0.25s ease-out; }
+
+/* ============================================================
+   PC 版
+   ============================================================ */
+@media (min-width: 768px){
+
+    body {
+        overflow-y: auto;
+        padding-top: 20px;
+    }
+
+    .header {
+        font-size: 26px;
+        padding: 16px 0;
+    }
+
+    .card {
+        margin: 16px auto;
+        padding: 20px;
+        width: 520px;
+        border-radius: 18px;
+        box-shadow: 0 3px 12px rgba(0,0,0,0.12);
+    }
+
+    .card-title {
+        font-size: 18px;
+        margin-bottom: 12px;
+    }
+
+    .btn {
+        padding: 12px 0;
+        font-size: 18px;
+        border-radius: 12px;
+        margin: 0 6px;
+    }
+
+    .btn-small {
+        width: 80px;
+        padding: 10px 0;
+        font-size: 17px;
+    }
+
+    .num {
+        font-size: 18px;
+        padding: 9px 8px;
+        width: 65px;
+    }
+
+    #dimSlider {
+        height: 26px;
+    }
+
+    #bleStatus {
+        font-size: 15px;
+    }
+
+    .logline {
+        height: 28px;
+        line-height: 26px;
+        font-size: 14px;
+        width: 550px;
+        margin: 12px auto;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div class="header">Multifunctional Under Water Lighting System</div>
+
+<!-- ===== Type1 ===== -->
+<div class="card">
+    <div class="card-title">Timing of lighting</div>
+    <div class="row">
+        <div class="btn" id="t1_0">M/ON</div>
+        <div class="btn" id="t1_1">M/OFF</div>
+        <div class="btn" id="t1_2">D/D</div>
+        <div class="btn" id="t1_3">Timer</div>
+        <input type="number" class="num" id="timerVal" min="1" max="16" value="1">
+    </div>
+</div>
+
+<!-- ===== DIM ===== -->
+<div class="card">
+    <div class="card-title">Dimmer</div>
+    <div class="slider-row">
+        <input type="range" id="dimSlider" min="1" max="10" value="1">
+        <input type="number" id="dimVal" min="1" max="10" value="1" class="num">
+    </div>
+</div>
+
+<!-- ===== Type2 ===== -->
+<div class="card">
+    <div class="card-title">Lighting pattern</div>
+    <div class="row">
+        <div class="btn" id="t2_0">Normal</div>
+        <div class="btn" id="t2_1">Flash</div>
+        <div class="btn" id="t2_2">Breath</div>
+    </div>
+</div>
+
+<!-- ===== ID / SET ===== -->
+<div class="card">
+    <div class="card-title">Fixture's ID</div>
+    <div class="row">
+        <input type="number" id="idSelect" class="num" min="1" max="32" value="1" style="width:55px;">
+        <div class="btn btn-small" id="addID">Add</div>
+        <div class="btn btn-small" id="setBtn" style="background:#28C76F;color:white;">SET</div>
+    </div>
+</div>
+
+<!-- ===== BLE ===== -->
+<div class="card">
+    <div class="card-title">Bluetooth</div>
+    <div class="row">
+        <div class="btn" id="SmartBLE" style="background:#2D73FF;color:white;">Connect</div>
+    </div>
+    <div id="bleStatus">BLE Status: Disconnected</div>
+</div>
+
+<!-- ===== TX/RX ===== -->
+<div class="logline" id="txLine">TX:</div>
+<div class="logline" id="rxLine">RX:</div>
+
+<script>
+/* ===== Internal 32 ID Memory ===== */
+let idData = Array.from({length:32},()=>({type1:0,type2:0,dim:1,timer:1}));
+let currentID=1;
+
+const idSelect=document.getElementById("idSelect");
+const t1Buttons=[0,1,2,3].map(i=>document.getElementById("t1_"+i));
+const t2Buttons=[0,1,2].map(i=>document.getElementById("t2_"+i));
+const timerVal=document.getElementById("timerVal");
+const dimSlider=document.getElementById("dimSlider");
+const dimVal=document.getElementById("dimVal");
+const txLine=document.getElementById("txLine");
+const rxLine=document.getElementById("rxLine");
+const bleStatus=document.getElementById("bleStatus");
+const setBtn=document.getElementById("setBtn");
+
+function setActive(group,i){ group.forEach((b,x)=>b.classList.toggle("active",x===i)); }
+function loadID(id){
+    const d=idData[id-1];
+    setActive(t1Buttons,d.type1);
+    setActive(t2Buttons,d.type2);
+    timerVal.value=d.timer;
+    dimSlider.value=d.dim;
+    dimVal.value=d.dim;
+}
+function saveID(){
+    const d=idData[currentID-1];
+    d.type1=t1Buttons.findIndex(b=>b.classList.contains("active"));
+    d.type2=t2Buttons.findIndex(b=>b.classList.contains("active"));
+    d.dim=parseInt(dimVal.value);
+    d.timer=parseInt(timerVal.value);
+}
+loadID(1);
+
+/* ===== UI Event ===== */
+t1Buttons.forEach((btn,i)=>btn.onclick=()=>{ setActive(t1Buttons,i); saveID(); });
+t2Buttons.forEach((btn,i)=>btn.onclick=()=>{ setActive(t2Buttons,i); saveID(); });
+timerVal.onchange=()=>{
+    if(timerVal.value<1) timerVal.value=1;
+    if(timerVal.value>16) timerVal.value=16;
+    saveID();
+};
+dimSlider.oninput=()=>{ dimVal.value=dimSlider.value; saveID(); };
+dimVal.onchange=()=>{ if(dimVal.value<1) dimVal.value=1; if(dimVal.value>10) dimVal.value=10; dimSlider.value=dimVal.value; saveID(); };
+idSelect.onchange=()=>{ saveID(); currentID=parseInt(idSelect.value); loadID(currentID); };
+document.getElementById("addID").onclick=()=>{
+    let v=parseInt(idSelect.value);
+    if(v<32){ idSelect.value=v+1; currentID=v+1; loadID(currentID); }
+};
+
+/* ===== BLE ===== */
+const SERVICE_UUID="0000fff0-0000-1000-8000-00805f9b34fb";
+const RX_CHAR_UUID="0000fff1-0000-1000-8000-00805f9b34fb"; // Notify
+const TX_CHAR_UUID="0000fff2-0000-1000-8000-00805f9b34fb"; // Write
+
+let bleDevice=null, bleServer, bleService=null, rxChar=null, txChar=null;
+
+document.getElementById("SmartBLE").onclick=async()=>{
+    if(!bleDevice){
+        try{
+            bleDevice = await navigator.bluetooth.requestDevice({filters:[{services:[SERVICE_UUID]}]});
+            bleDevice.addEventListener("gattserverdisconnected",()=>{
+                bleDevice=null; bleStatus.textContent="BLE Status: Disconnected";
+            });
+            bleServer = await bleDevice.gatt.connect();
+            bleService = await bleServer.getPrimaryService(SERVICE_UUID);
+
+            // 分別抓 notify & write characteristic
+            rxChar = await bleService.getCharacteristic(RX_CHAR_UUID);
+            txChar = await bleService.getCharacteristic(TX_CHAR_UUID);
+
+            await rxChar.startNotifications();
+            rxChar.addEventListener('characteristicvaluechanged', onRX);
+
+            bleStatus.textContent="BLE Status: Connected";
+        }catch(e){
+            bleStatus.textContent="BLE Status: Connect Error";
+            console.error(e);
+        }
+    } else {
+        bleDevice.gatt.disconnect();
+        bleDevice=null;
+        bleStatus.textContent="BLE Status: Disconnected";
+    }
+};
+
+/* ===== RX Handler ===== */
+function onRX(e){
+    const v=new Uint8Array(e.target.value.buffer);
+    rxLine.textContent="RX: "+[...v].map(x=>x.toString(16).padStart(2,'0')).join(" ");
+    // 檢查封包長度
+    if(v.length === 6 && v[0] === 0xAA){
+        const id = v[1];
+        if(id >= 1 && id <= 32){
+            // 更新記憶空間
+            idData[id-1].type1 = v[2];
+            idData[id-1].type2 = v[3];
+            idData[id-1].dim   = v[4];
+            idData[id-1].timer = v[5];
+
+            // 如果目前頁面顯示的是該ID，也更新UI
+            if(currentID === id){
+                loadID(id);
+            }
+        }
+    }
+
+}
+
+/* ===== SET Button send ===== */
+setBtn.onclick=async()=>{
+    setBtn.classList.remove("btn-bounce"); void setBtn.offsetWidth; setBtn.classList.add("btn-bounce");
+    setBtn.classList.add("btn-set-anim");
+
+    saveID();
+    const d=idData[currentID-1];
+    const pkt=new Uint8Array([0x55,currentID,d.type1,d.type2,d.dim,d.timer]);
+
+    txLine.textContent="TX: "+[...pkt].map(x=>x.toString(16).padStart(2,'0')).join(" ");
+    if(txChar){
+        try{
+            await txChar.writeValue(pkt);
+        }catch(e){
+            console.error("Send error:", e);
+            alert("Send error: "+e);
+        }
+    }
+
+    setTimeout(()=> setBtn.classList.remove("btn-set-anim"),2000);
+};
+</script>
+</body>
+</html>
