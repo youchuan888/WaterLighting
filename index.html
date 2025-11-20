@@ -73,12 +73,32 @@ body {
     font-size: 14px;
 }
 
+.num-wrapper {
+    display: flex;
+    align-items: center;
+}
+
 .num {
     width: 50px;
     padding: 6px 5px;
     font-size: 15px;
     border-radius: 8px;
     border: 1px solid #c6cbd3;
+    text-align: center;
+}
+
+.arrow-btn {
+    background-color: #f1f4f8;
+    border: 1px solid #d0d6e0;
+    border-radius: 6px;
+    padding: 4px 8px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: 0.15s;
+}
+
+.arrow-btn:active {
+    transform: scale(0.96);
 }
 
 .slider-row { display: flex; align-items: center; }
@@ -121,69 +141,6 @@ body {
 }
 .btn-bounce { animation: bounceTap 0.25s ease-out; }
 
-/* ============================================================
-   PC 版
-   ============================================================ */
-@media (min-width: 768px){
-
-    body {
-        overflow-y: auto;
-        padding-top: 20px;
-    }
-
-    .header {
-        font-size: 26px;
-        padding: 16px 0;
-    }
-
-    .card {
-        margin: 16px auto;
-        padding: 20px;
-        width: 520px;
-        border-radius: 18px;
-        box-shadow: 0 3px 12px rgba(0,0,0,0.12);
-    }
-
-    .card-title {
-        font-size: 18px;
-        margin-bottom: 12px;
-    }
-
-    .btn {
-        padding: 12px 0;
-        font-size: 18px;
-        border-radius: 12px;
-        margin: 0 6px;
-    }
-
-    .btn-small {
-        width: 80px;
-        padding: 10px 0;
-        font-size: 17px;
-    }
-
-    .num {
-        font-size: 18px;
-        padding: 9px 8px;
-        width: 65px;
-    }
-
-    #dimSlider {
-        height: 26px;
-    }
-
-    #bleStatus {
-        font-size: 15px;
-    }
-
-    .logline {
-        height: 28px;
-        line-height: 26px;
-        font-size: 14px;
-        width: 550px;
-        margin: 12px auto;
-    }
-}
 </style>
 </head>
 
@@ -199,7 +156,11 @@ body {
         <div class="btn" id="t1_1">M/OFF</div>
         <div class="btn" id="t1_2">D/D</div>
         <div class="btn" id="t1_3">Timer</div>
-        <input type="number" class="num" id="timerVal" min="1" max="16" value="1">
+        <div class="num-wrapper">
+            <button class="arrow-btn" id="timerValUp">↑</button>
+            <input type="number" class="num" id="timerVal" min="1" max="16" value="1">
+            <button class="arrow-btn" id="timerValDown">↓</button>
+        </div>
     </div>
 </div>
 
@@ -226,7 +187,11 @@ body {
 <div class="card">
     <div class="card-title">Fixture's ID</div>
     <div class="row">
-        <input type="number" id="idSelect" class="num" min="1" max="32" value="1" style="width:55px;">
+        <div class="num-wrapper">
+            <button class="arrow-btn" id="idSelectUp">↑</button>
+            <input type="number" id="idSelect" class="num" min="1" max="32" value="1" style="width:55px;">
+            <button class="arrow-btn" id="idSelectDown">↓</button>
+        </div>
         <div class="btn btn-small" id="addID">Add</div>
         <div class="btn btn-small" id="setBtn" style="background:#28C76F;color:white;">SET</div>
     </div>
@@ -246,7 +211,7 @@ body {
 <div class="logline" id="rxLine">RX:</div>
 
 <script>
-/* ===== Internal 32 ID Memory ===== */
+// Internal 32 ID Memory
 let idData = Array.from({length:32},()=>({type1:0,type2:0,dim:1,timer:1}));
 let currentID=1;
 
@@ -279,21 +244,43 @@ function saveID(){
 }
 loadID(1);
 
-/* ===== UI Event ===== */
+// Event Listeners for Up/Down Arrows (Timer and ID)
+document.getElementById("timerValUp").onclick = () => {
+    if (timerVal.value < 16) {
+        timerVal.value = parseInt(timerVal.value) + 1;
+        saveID();
+    }
+};
+document.getElementById("timerValDown").onclick = () => {
+    if (timerVal.value > 1) {
+        timerVal.value = parseInt(timerVal.value) - 1;
+        saveID();
+    }
+};
+
+document.getElementById("idSelectUp").onclick = () => {
+    if (idSelect.value < 32) {
+        idSelect.value = parseInt(idSelect.value) + 1;
+        currentID = idSelect.value;
+        loadID(currentID);
+    }
+};
+document.getElementById("idSelectDown").onclick = () => {
+    if (idSelect.value > 1) {
+        idSelect.value = parseInt(idSelect.value) - 1;
+        currentID = idSelect.value;
+        loadID(currentID);
+    }
+};
+
+// UI Event Listeners
 t1Buttons.forEach((btn,i)=>btn.onclick=()=>{ setActive(t1Buttons,i); saveID(); });
 t2Buttons.forEach((btn,i)=>btn.onclick=()=>{ setActive(t2Buttons,i); saveID(); });
-timerVal.onchange=()=>{
-    if(timerVal.value<1) timerVal.value=1;
-    if(timerVal.value>16) timerVal.value=16;
-    saveID();
-};
+timerVal.onchange=()=>{ if(timerVal.value<1) timerVal.value=1; if(timerVal.value>16) timerVal.value=16; saveID(); };
 dimSlider.oninput=()=>{ dimVal.value=dimSlider.value; saveID(); };
 dimVal.onchange=()=>{ if(dimVal.value<1) dimVal.value=1; if(dimVal.value>10) dimVal.value=10; dimSlider.value=dimVal.value; saveID(); };
 idSelect.onchange=()=>{ saveID(); currentID=parseInt(idSelect.value); loadID(currentID); };
-document.getElementById("addID").onclick=()=>{
-    let v=parseInt(idSelect.value);
-    if(v<32){ idSelect.value=v+1; currentID=v+1; loadID(currentID); }
-};
+document.getElementById("addID").onclick=()=>{ let v=parseInt(idSelect.value); if(v<32){ idSelect.value=v+1; currentID=v+1; loadID(currentID); } };
 
 /* ===== BLE ===== */
 const SERVICE_UUID="0000fff0-0000-1000-8000-00805f9b34fb";
@@ -302,13 +289,11 @@ const TX_CHAR_UUID="0000fff2-0000-1000-8000-00805f9b34fb"; // Write
 
 let bleDevice=null, bleServer, bleService=null, rxChar=null, txChar=null;
 
-document.getElementById("SmartBLE").onclick=async()=>{
+document.getElementById("SmartBLE").onclick=async()=>{ 
     if(!bleDevice){
         try{
             bleDevice = await navigator.bluetooth.requestDevice({filters:[{services:[SERVICE_UUID]}]});
-            bleDevice.addEventListener("gattserverdisconnected",()=>{
-                bleDevice=null; bleStatus.textContent="BLE Status: Disconnected";
-            });
+            bleDevice.addEventListener("gattserverdisconnected",()=>{ bleDevice=null; bleStatus.textContent="BLE Status: Disconnected"; });
             bleServer = await bleDevice.gatt.connect();
             bleService = await bleServer.getPrimaryService(SERVICE_UUID);
 
@@ -331,27 +316,23 @@ document.getElementById("SmartBLE").onclick=async()=>{
     }
 };
 
-/* ===== RX Handler ===== */
+// RX Handler
 function onRX(e){
     const v=new Uint8Array(e.target.value.buffer);
     rxLine.textContent="RX: "+[...v].map(x=>x.toString(16).padStart(2,'0')).join(" ");
-    // 檢查封包長度
     if(v.length === 6 && v[0] === 0xAA){
         const id = v[1];
         if(id >= 1 && id <= 32){
-            // 更新記憶空間
             idData[id-1].type1 = v[2];
             idData[id-1].type2 = v[3];
             idData[id-1].dim   = v[4];
             idData[id-1].timer = v[5];
 
-            // 如果目前頁面顯示的是該ID，也更新UI
             if(currentID === id){
                 loadID(id);
             }
         }
     }
-
 }
 
 /* ===== SET Button send ===== */
