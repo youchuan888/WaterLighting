@@ -279,7 +279,7 @@ t2Buttons.forEach((btn,i)=>btn.onclick=()=>{ setActive(t2Buttons,i); saveID(); }
 timerVal.onchange=()=>{ if(timerVal.value<1) timerVal.value=1; if(timerVal.value>16) timerVal.value=16; saveID(); };
 dimSlider.oninput=()=>{ dimVal.value=dimSlider.value; saveID(); };
 dimVal.onchange=()=>{ if(dimVal.value<1) dimVal.value=1; if(dimVal.value>10) dimVal.value=10; dimSlider.value=dimVal.value; saveID(); };
-idSelect.onchange=()=>{ saveID(); currentID=parseInt(idSelect.value); loadID(currentID); };
+idSelect.onchange=()=>{if(idSelect.value<1) idSelect.value=1; if(idSelect.value>32) idSelect.value=32; saveID(); currentID=parseInt(idSelect.value); loadID(currentID); };
 document.getElementById("addID").onclick=()=>{ let v=parseInt(idSelect.value); if(v<32){ idSelect.value=v+1; currentID=v+1; loadID(currentID); } };
 
 /* ===== BLE ===== */
@@ -359,6 +359,7 @@ setBtn.onclick=async()=>{
 </script>
 </body>
 </html>
+
 
 
 
