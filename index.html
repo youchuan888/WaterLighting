@@ -211,8 +211,8 @@ body {
 <div class="logline" id="rxLine">RX:</div>
 
 <script>
-// Internal 32 ID Memory
-let idData = Array.from({length:32},()=>({type1:0,type2:0,dim:1,timer:1}));
+// Internal 32 ID + 1 all =33 Memory
+let idData = Array.from({length:33},()=>({type1:0,type2:0,dim:1,timer:1}));
 let currentID=1;
 
 const idSelect=document.getElementById("idSelect");
@@ -359,6 +359,7 @@ setBtn.onclick=async()=>{
 </script>
 </body>
 </html>
+
 
 
 
