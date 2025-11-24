@@ -322,12 +322,45 @@ function onRX(e){
     rxLine.textContent="RX: "+[...v].map(x=>x.toString(16).toUpperCase().padStart(2,'0')).join(" ");
     if(v.length === 6 && v[0] === 0xAA){
         const id = v[1];
-        if(id >= 1 && id <= 7){
+        if(id === 0){
+            idData[0].type1 = v[2];
+            idData[0].type2 = v[3];
+            idData[0].dim   = v[4];
+            idData[0].timer = v[5];   
+            idData[1].type1 = v[2];
+            idData[1].type2 = v[3];
+            idData[1].dim   = v[4];
+            idData[1].timer = v[5];     
+            idData[2].type1 = v[2];
+            idData[2].type2 = v[3];
+            idData[2].dim   = v[4];
+            idData[2].timer = v[5]; 
+            idData[3].type1 = v[2];
+            idData[3].type2 = v[3];
+            idData[3].dim   = v[4];
+            idData[3].timer = v[5]; 
+            idData[4].type1 = v[2];
+            idData[4].type2 = v[3];
+            idData[4].dim   = v[4];
+            idData[4].timer = v[5];   
+            idData[5].type1 = v[2];
+            idData[5].type2 = v[3];
+            idData[5].dim   = v[4];
+            idData[5].timer = v[5];
+            idData[6].type1 = v[2];
+            idData[6].type2 = v[3];
+            idData[6].dim   = v[4];
+            idData[6].timer = v[5];  
+            idData[7].type1 = v[2];
+            idData[7].type2 = v[3];
+            idData[7].dim   = v[4];
+            idData[7].timer = v[5]; 
+            load(id);
+        }else if(id >= 1 && id <= 7){
             idData[id].type1 = v[2];
             idData[id].type2 = v[3];
             idData[id].dim   = v[4];
             idData[id].timer = v[5];
-
             if(currentID === id){
                 loadID(id);
             }
@@ -359,6 +392,7 @@ setBtn.onclick=async()=>{
 </script>
 </body>
 </html>
+
 
 
 
