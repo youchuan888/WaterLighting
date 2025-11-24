@@ -280,7 +280,7 @@ timerVal.onchange=()=>{ if(timerVal.value<1) timerVal.value=1; if(timerVal.value
 dimSlider.oninput=()=>{ dimVal.value=dimSlider.value; saveID(); };
 dimVal.onchange=()=>{ if(dimVal.value<1) dimVal.value=1; if(dimVal.value>10) dimVal.value=10; dimSlider.value=dimVal.value; saveID(); };
 idSelect.onchange=()=>{if(idSelect.value<1) idSelect.value=1; if(idSelect.value>7) idSelect.value=7; saveID(); currentID=parseInt(idSelect.value); loadID(currentID); };
-document.getElementById("addID").onclick=()=>{ idSelect.value=0; currentID=8; loadID(currentID); };
+document.getElementById("addID").onclick=()=>{ idSelect.value=0; currentID=0; loadID(currentID); };
 
 /* ===== BLE ===== */
 const SERVICE_UUID="0000fff0-0000-1000-8000-00805f9b34fb";
@@ -359,6 +359,7 @@ setBtn.onclick=async()=>{
 </script>
 </body>
 </html>
+
 
 
 
