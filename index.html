@@ -228,7 +228,7 @@ const setBtn=document.getElementById("setBtn");
 
 function setActive(group,i){ group.forEach((b,x)=>b.classList.toggle("active",x===i)); }
 function loadID(id){
-    const d=idData[id-1];
+    const d=idData[id];
     setActive(t1Buttons,d.type1);
     setActive(t2Buttons,d.type2);
     timerVal.value=d.timer;
@@ -236,7 +236,7 @@ function loadID(id){
     dimVal.value=d.dim;
 }
 function saveID(){
-    const d=idData[currentID-1];
+    const d=idData[currentID];
     d.type1=t1Buttons.findIndex(b=>b.classList.contains("active"));
     d.type2=t2Buttons.findIndex(b=>b.classList.contains("active"));
     d.dim=parseInt(dimVal.value);
@@ -322,11 +322,11 @@ function onRX(e){
     rxLine.textContent="RX: "+[...v].map(x=>x.toString(16).toUpperCase().padStart(2,'0')).join(" ");
     if(v.length === 6 && v[0] === 0xAA){
         const id = v[1];
-        if(id >= 1 && id <= 32){
-            idData[id-1].type1 = v[2];
-            idData[id-1].type2 = v[3];
-            idData[id-1].dim   = v[4];
-            idData[id-1].timer = v[5];
+        if(id >= 1 && id <= 7){
+            idData[id].type1 = v[2];
+            idData[id].type2 = v[3];
+            idData[id].dim   = v[4];
+            idData[id].timer = v[5];
 
             if(currentID === id){
                 loadID(id);
@@ -341,7 +341,7 @@ setBtn.onclick=async()=>{
     setBtn.classList.add("btn-set-anim");
 
     saveID();
-    const d=idData[currentID-1];
+    const d=idData[currentID];
     const pkt=new Uint8Array([0x55,currentID,d.type1,d.type2,d.dim,d.timer]);
 
     txLine.textContent="TX: "+[...pkt].map(x=>x.toString(16).padStart(2,'0')).join(" ");
@@ -359,6 +359,7 @@ setBtn.onclick=async()=>{
 </script>
 </body>
 </html>
+
 
 
 
