@@ -355,7 +355,7 @@ function onRX(e){
             idData[7].type2 = v[3];
             idData[7].dim   = v[4];
             idData[7].timer = v[5]; 
-            load(id);
+            loadID(id);
         }else if(id >= 1 && id <= 7){
             idData[id].type1 = v[2];
             idData[id].type2 = v[3];
@@ -392,6 +392,7 @@ setBtn.onclick=async()=>{
 </script>
 </body>
 </html>
+
 
 
 
