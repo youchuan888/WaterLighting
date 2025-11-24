@@ -189,7 +189,7 @@ body {
     <div class="row">
         <div class="num-wrapper">
             <button class="arrow-btn" id="idSelectUp">↑</button>
-            <input type="number" id="idSelect" class="num" min="1" max="32" value="1" style="width:55px;">
+            <input type="number" id="idSelect" class="num" min="1" max="7" value="1" style="width:55px;">
             <button class="arrow-btn" id="idSelectDown">↓</button>
         </div>
         <div class="btn btn-small" id="addID">ALL</div>
@@ -279,8 +279,8 @@ t2Buttons.forEach((btn,i)=>btn.onclick=()=>{ setActive(t2Buttons,i); saveID(); }
 timerVal.onchange=()=>{ if(timerVal.value<1) timerVal.value=1; if(timerVal.value>15) timerVal.value=15; saveID(); };
 dimSlider.oninput=()=>{ dimVal.value=dimSlider.value; saveID(); };
 dimVal.onchange=()=>{ if(dimVal.value<1) dimVal.value=1; if(dimVal.value>10) dimVal.value=10; dimSlider.value=dimVal.value; saveID(); };
-idSelect.onchange=()=>{if(idSelect.value<1) idSelect.value=1; if(idSelect.value>32) idSelect.value=32; saveID(); currentID=parseInt(idSelect.value); loadID(currentID); };
-document.getElementById("addID").onclick=()=>{ idSelect.value=0; currentID=33; loadID(currentID); };
+idSelect.onchange=()=>{if(idSelect.value<1) idSelect.value=1; if(idSelect.value>7) idSelect.value=7; saveID(); currentID=parseInt(idSelect.value); loadID(currentID); };
+document.getElementById("addID").onclick=()=>{ idSelect.value=0; currentID=8; loadID(currentID); };
 
 /* ===== BLE ===== */
 const SERVICE_UUID="0000fff0-0000-1000-8000-00805f9b34fb";
@@ -359,6 +359,7 @@ setBtn.onclick=async()=>{
 </script>
 </body>
 </html>
+
 
 
 
