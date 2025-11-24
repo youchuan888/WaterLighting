@@ -356,13 +356,13 @@ function onRX(e){
             idData[7].dim   = v[4];
             idData[7].timer = v[5]; 
             loadID(id);
-        }else if(id >= 1 && id <= 7){
+        }else if(id <= 7){
             idData[id].type1 = v[2];
             idData[id].type2 = v[3];
             idData[id].dim   = v[4];
             idData[id].timer = v[5];
             if(currentID === id){
-                loadID(id);
+            loadID(id);
             }
         }
     }
@@ -392,6 +392,7 @@ setBtn.onclick=async()=>{
 </script>
 </body>
 </html>
+
 
 
 
